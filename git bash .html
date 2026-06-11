@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas de Controle de Versão: Guia de Comandos Git</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600;700&display=swap');
+        :root { --terminal-bg: #0d1117; --terminal-text: #c9d1d9; --git-orange: #f05032; }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f2f5; }
+        .terminal {
+            background-color: var(--terminal-bg);
+            color: var(--terminal-text);
+            font-family: 'Fira Code', monospace;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+        .terminal-content { overflow-y: auto; flex-grow: 1; scroll-behavior: smooth; }
+        .command-line { color: #58a6ff; font-weight: bold; }
+        .cursor { display: inline-block; width: 8px; height: 18px; background: #58a6ff; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .cmd-card { 
+            border-left: 4px solid #d0d7de; 
+            transition: all 0.2s ease; 
+            cursor: pointer; 
+            background: white;
+        }
+        .cmd-card:hover { transform: translateX(5px); background: #f8f9fa; }
+        .cmd-card.active { border-left-color: var(--git-orange); background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .syntax-box { background: #1b1f23; color: #ffab70; padding: 4px 8px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85rem; }
+    </style>
+</head>
+<body class="p-2 md:p-6">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8 border-b pb-6 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-black text-gray-900 tracking-tight">DOCUMENTAÇÃO TÉCNICA: GIT BASH</h1>
+                <p class="text-gray-500 font-medium">Análise Profunda dos Comandos e Fluxos (Baseado em Materiais IFSP)</p>
+            </div>
+            <div class="text-xs font-mono text-gray-400 bg-white px-3 py-1 rounded-full border">v2.0.0-stable</div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- MENU DE COMANDOS (LADO ESQUERDO) -->
+            <div class="lg:col-span-5 space-y-4 overflow-y-auto max-h-[85vh] pr-4 custom-scrollbar">
+                
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Eixo 1: Preparação do Ambiente</h2>
+                
+                <!-- git config name -->
+                <div id="step-0" class="cmd-card p-4 rounded-r-lg active" onclick="runStep(0)">
+                    <h4 class="font-bold text-sm">git config --global user.name</h4>
+                    <p class="text-xs text-gray-500 mt-1">Identificação de Autoria (Nome)</p>
+                </div>
+
+                <!-- git config email -->
+                <div id="step-1" class="cmd-card p-4 rounded-r-lg" onclick="runStep(1)">
+                    <h4 class="font-bold text-sm">git config --global user.email</h4>
+                    <p class="text-xs text-gray-500 mt-1">Identificação de Autoria (Email)</p>
+                </div>
+
+                <!-- git config branch -->
+                <div id="step-2" class="cmd-card p-4 rounded-r-lg" onclick="runStep(2)">
+                    <h4 class="font-bold text-sm">git config --global init.defaultBranch</h4>
+                    <p class="text-xs text-gray-500 mt-1">Padronização da Branch Raiz</p>
+                </div>
+
+                <!-- git init -->
+                <div id="step-3" class="cmd-card p-4 rounded-r-lg" onclick="runStep(3)">
+                    <h4 class="font-bold text-sm">git init</h4>
+                    <p class="text-xs text-gray-500 mt-1">Criação do Repositório Local</p>
+                </div>
+
+                <!-- git config list -->
+                <div id="step-4" class="cmd-card p-4 rounded-r-lg" onclick="runStep(4)">
+                    <h4 class="font-bold text-sm">git config --list</h4>
+                    <p class="text-xs text-gray-500 mt-1">Auditoria de Configurações</p>
+                </div>
+
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-8 mb-4">Eixo 2: Ciclo de Vida e Versão</h2>
+
+                <div id="step-5" class="cmd-card p-4 rounded-r-lg" onclick="runStep(5)">
+                    <h4 class="font-bold text-sm">git status</h4>
+                    <p class="text-xs text-gray-500 mt-1">Inspeção de Estados dos Arquivos</p>
+                </div>
+
+                <div id="step-6" class="cmd-card p-4 rounded-r-lg" onclick="runStep(6)">
+                    <h4 class="font-bold text-sm">git add</h4>
+                    <p class="text-xs text-gray-500 mt-1">Transição para Staged (Preparação)</p>
+                </div>
+
+                <div id="step-7" class="cmd-card p-4 rounded-r-lg" onclick="runStep(7)">
+                    <h4 class="font-bold text-sm">git commit</h4>
+                    <p class="text-xs text-gray-500 mt-1">Geração de Novo Estado (Snapshot)</p>
+                </div>
+
+                <div id="step-8" class="cmd-card p-4 rounded-r-lg" onclick="runStep(8)">
+                    <h4 class="font-bold text-sm">git log --oneline</h4>
+                    <p class="text-xs text-gray-500 mt-1">Rastreamento do Histórico</p>
+                </div>
+
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-8 mb-4">Eixo 3: Branches e Paralelismo</h2>
+
+                <div id="step-9" class="cmd-card p-4 rounded-r-lg" onclick="runStep(9)">
+                    <h4 class="font-bold text-sm">git branch</h4>
+                    <p class="text-xs text-gray-500 mt-1">Criação de Linhas Alternativas</p>
+                </div>
+
+                <div id="step-10" class="cmd-card p-4 rounded-r-lg" onclick="runStep(10)">
+                    <h4 class="font-bold text-sm">git checkout</h4>
+                    <p class="text-xs text-gray-500 mt-1">Alternância de Contexto de Trabalho</p>
+                </div>
+
+                <div id="step-11" class="cmd-card p-4 rounded-r-lg" onclick="runStep(11)">
+                    <h4 class="font-bold text-sm">git merge</h4>
+                    <p class="text-xs text-gray-500 mt-1">Unificação de Trabalho Independente</p>
+                </div>
+
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-8 mb-4">Eixo 4: Correção e Manutenção</h2>
+
+                <div id="step-12" class="cmd-card p-4 rounded-r-lg" onclick="runStep(12)">
+                    <h4 class="font-bold text-sm">git diff</h4>
+                    <p class="text-xs text-gray-500 mt-1">Comparação de Diferenças</p>
+                </div>
+
+                <div id="step-13" class="cmd-card p-4 rounded-r-lg" onclick="runStep(13)">
+                    <h4 class="font-bold text-sm">git checkout --</h4>
+                    <p class="text-xs text-gray-500 mt-1">Restauração de Arquivos Editados</p>
+                </div>
+
+                <div id="step-14" class="cmd-card p-4 rounded-r-lg" onclick="runStep(14)">
+                    <h4 class="font-bold text-sm">git reset HEAD</h4>
+                    <p class="text-xs text-gray-500 mt-1">Retorno de Staged para Modified</p>
+                </div>
+
+                <div id="step-15" class="cmd-card p-4 rounded-r-lg" onclick="runStep(15)">
+                    <h4 class="font-bold text-sm">git reset --soft / --hard</h4>
+                    <p class="text-xs text-gray-500 mt-1">Reversão de Commits e Estados</p>
+                </div>
+
+            </div>
+
+            <!-- TERMINAL E EXPLICAÇÃO (LADO DIREITO) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Painel de Explicação Detalhada -->
+                <div id="details-panel" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[300px]">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                            <i id="icon-type" class="fas fa-terminal"></i>
+                        </div>
+                        <h3 id="detail-title" class="text-xl font-bold text-gray-800">Selecione um comando</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-6 text-sm">
+                        <div>
+                            <span class="text-xs font-bold text-gray-400 uppercase">Sintaxe</span>
+                            <div id="detail-syntax" class="syntax-box mt-1">Aguardando...</div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-xs font-bold text-gray-400 uppercase">Para que serve?</span>
+                                <p id="detail-purpose" class="mt-1 text-gray-600">Selecione um comando à esquerda para ver a explicação universitária detalhada.</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold text-gray-400 uppercase">Quando usar?</span>
+                                <p id="detail-when" class="mt-1 text-gray-600 italic">No início do projeto, durante a rotina ou em emergências.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualização do Terminal -->
+                <div class="terminal">
+                    <div class="flex items-center gap-2 mb-4 border-b border-[#30363d] pb-2">
+                        <div class="dot bg-[#ff5f56]"></div>
+                        <div class="dot bg-[#ffbd2e]"></div>
+                        <div class="dot bg-[#27c93f]"></div>
+                        <span class="text-[10px] opacity-40 ml-2 font-mono">GIT-BASH-SIMULATOR v2.0</span>
+                    </div>
+                    <div id="terminal-screen" class="terminal-content custom-scrollbar text-sm"></div>
+                    <div class="flex items-center mt-2 border-t border-[#30363d] pt-2">
+                        <span class="command-line mr-2">dev@IFSP-LAB <span id="current-branch" class="text-purple-400">(main)</span> $</span>
+                        <span id="typing-line" class="text-white"></span>
+                        <span class="cursor"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const instructions = [
+            {
+                title: "git config --global user.name",
+                syntax: 'git config --global user.name "Seu Nome"',
+                purpose: "Vincula o seu nome real a todas as alterações que você realizar no código.",
+                when: "Obrigatório em máquinas novas ou após reinstalação do Git.",
+                cmd: 'git config --global user.name "Ewiston Mattos"',
+                output: 'Configuração global de nome aplicada.',
+                icon: 'fa-user'
+            },
+            {
+                title: "git config --global user.email",
+                syntax: 'git config --global user.email "seu@email.com"',
+                purpose: "Vincula seu endereço de email aos commits, permitindo que plataformas como GitHub identifiquem sua conta.",
+                when: "Logo após configurar o nome de usuário.",
+                cmd: 'git config --global user.email "ewistonmattos@gmail.com"',
+                output: 'Configuração global de e-mail aplicada.',
+                icon: 'fa-envelope'
+            },
+            {
+                title: "git config --global init.defaultBranch",
+                syntax: 'git config --global init.defaultBranch main',
+                purpose: "Define o nome padrão para a branch principal de todos os novos repositórios que você criar.",
+                when: "Recomendado como padrão moderno (substituindo o antigo 'master').",
+                cmd: 'git config --global init.defaultBranch main',
+                output: 'Default branch definido para: main',
+                icon: 'fa-code-branch'
+            },
+            {
+                title: "git init",
+                syntax: 'git init',
+                purpose: "Cria o diretório oculto .git e transforma a pasta atual em um repositório versionável.",
+                when: "No exato momento em que você inicia um novo projeto de software.",
+                cmd: 'git init',
+                output: 'Initialized empty Git repository in C:/lab/projeto/.git/',
+                icon: 'fa-folder-plus'
+            },
+            {
+                title: "git config --list",
+                syntax: 'git config --list',
+                purpose: "Exibe todas as variáveis de configuração ativas no sistema e no repositório.",
+                when: "Para validar se as configurações de nome, email e branch foram salvas corretamente.",
+                cmd: 'git config --list',
+                output: 'user.name=Ewiston Mattos\nuser.email=ewistonmattos@gmail.com\ninit.defaultbranch=main\ncore.repositoryformatversion=0...',
+                icon: 'fa-list-ul'
+            },
+            {
+                title: "git status",
+                syntax: 'git status',
+                purpose: "Mostra o estado atual dos arquivos: quais foram alterados, quais estão prontos para commit e quais não estão sendo rastreados.",
+                when: "A todo momento! É o comando mais usado para entender onde você está no ciclo de vida.",
+                cmd: 'git status',
+                output: 'On branch main\nUntracked files:\n  index.php\nnothing added to commit but untracked files present.',
+                icon: 'fa-search'
+            },
+            {
+                title: "git add",
+                syntax: 'git add [nome_arquivo]',
+                purpose: "Move o arquivo do estado 'Modified' ou 'Untracked' para o estado 'Staged' (Preparado).",
+                when: "Quando você terminou uma alteração lógica e deseja incluí-la na próxima versão.",
+                cmd: 'git add index.php',
+                output: 'Arquivo index.php movido para Staging Area.',
+                icon: 'fa-plus-square'
+            },
+            {
+                title: "git commit",
+                syntax: 'git commit -m "mensagem explicativa"',
+                purpose: "Gera um novo nó na linha do tempo (snapshot) com todos os arquivos que estavam em Staged.",
+                when: "Sempre que concluir uma unidade de trabalho funcional.",
+                cmd: 'git commit -m "feat: setup inicial do projeto"',
+                output: '[main (root-commit) a1b2c3d] feat: setup inicial do projeto\n 1 file changed, 3 insertions(+)',
+                icon: 'fa-save'
+            },
+            {
+                title: "git log --oneline",
+                syntax: 'git log --oneline',
+                purpose: "Exibe o histórico simplificado de commits, mostrando apenas o ID e a mensagem.",
+                when: "Para localizar versões anteriores ou conferir a evolução do projeto.",
+                cmd: 'git log --oneline',
+                output: 'a1b2c3d feat: setup inicial do projeto\nf9e8d7c initial commit',
+                icon: 'fa-history'
+            },
+            {
+                title: "git branch",
+                syntax: 'git branch [nome_da_branch]',
+                purpose: "Cria uma nova ramificação na linha do tempo para trabalho paralelo.",
+                when: "Ao iniciar uma nova funcionalidade (feature) ou correção (bugfix) sem querer quebrar a main.",
+                cmd: 'git branch feat/login',
+                output: 'Branch feat/login criado com sucesso.',
+                icon: 'fa-code-branch'
+            },
+            {
+                title: "git checkout",
+                syntax: 'git checkout [nome_da_branch]',
+                purpose: "Altera o ponteiro HEAD para uma branch diferente, mudando os arquivos físicos na pasta.",
+                when: "Sempre que precisar trocar de contexto de trabalho (ex: sair da main para a feature).",
+                cmd: 'git checkout feat/login',
+                output: "Switched to branch 'feat/login'",
+                icon: 'fa-exchange-alt',
+                branchChange: 'feat/login'
+            },
+            {
+                title: "git merge",
+                syntax: 'git merge [nome_da_branch]',
+                purpose: "Unifica o histórico de duas ramificações diferentes.",
+                when: "Quando a funcionalidade trabalhada na branch paralela está pronta e testada para ir para a main.",
+                cmd: 'git merge feat/login',
+                output: 'Updating a1b2c3d..b5c6d7\nFast-forward\n login.php | 15 ++++++++++++++',
+                icon: 'fa-layer-group'
+            },
+            {
+                title: "git diff",
+                syntax: 'git diff [nome_arquivo]',
+                purpose: "Exibe linha a linha o que foi alterado entre o arquivo no disco e a última versão commitada.",
+                when: "Antes de dar 'git add', para conferir se você não deixou passar algum código de teste ou erro.",
+                cmd: 'git diff index.php',
+                output: '--- a/index.php\n+++ b/index.php\n@@ -1,2 +1,3 @@\n <?php\n-echo "Olá";\n+echo "Olá Mundo!";',
+                icon: 'fa-columns'
+            },
+            {
+                title: "git checkout --",
+                syntax: 'git checkout -- [nome_arquivo]',
+                purpose: "Descarta todas as alterações feitas em um arquivo que ainda não foram para o Staging Area.",
+                when: "Quando você fez alterações erradas e quer 'limpar' o arquivo voltando ao estado original.",
+                cmd: 'git checkout -- index.php',
+                output: 'Arquivo index.php restaurado para a versão do commit.',
+                icon: 'fa-undo'
+            },
+            {
+                title: "git reset HEAD",
+                syntax: 'git reset HEAD [nome_arquivo]',
+                purpose: "Tira um arquivo do estado 'Staged' e o volta para 'Modified' (destrava o commit).",
+                when: "Quando você deu 'git add' em um arquivo que não deveria entrar no próximo commit.",
+                cmd: 'git reset HEAD index.php',
+                output: 'Unstaged changes after reset.',
+                icon: 'fa-arrow-left'
+            },
+            {
+                title: "git reset --soft / --hard",
+                syntax: 'git reset --soft [id_commit] OU --hard [id_commit]',
+                purpose: "O --soft volta o commit mas mantém os arquivos no stage. O --hard apaga tudo e volta no tempo bruscamente.",
+                when: "Para desfazer commits inteiros. Use o --hard com extrema cautela.",
+                cmd: 'git reset --soft HEAD~1',
+                output: 'Commit desfeito. Arquivos voltaram para a Staging Area.',
+                icon: 'fa-history'
+            }
+        ];
+
+        let isTyping = false;
+
+        function runStep(index) {
+            if (isTyping) return;
+            isTyping = true;
+
+            const data = instructions[index];
+            const screen = document.getElementById('terminal-screen');
+            const typing = document.getElementById('typing-line');
+            const branchLabel = document.getElementById('current-branch');
+
+            // UI Cards
+            document.querySelectorAll('.cmd-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`step-${index}`).classList.add('active');
+
+            // Detail Panel Update
+            document.getElementById('detail-title').textContent = data.title;
+            document.getElementById('detail-syntax').textContent = data.syntax;
+            document.getElementById('detail-purpose').textContent = data.purpose;
+            document.getElementById('detail-when').textContent = data.when;
+            document.getElementById('icon-type').className = `fas ${data.icon}`;
+
+            // Terminal Animation
+            typing.textContent = '';
+            let charPos = 0;
+            const typeInterval = setInterval(() => {
+                if (charPos < data.cmd.length) {
+                    typing.textContent += data.cmd.charAt(charPos);
+                    charPos++;
+                } else {
+                    clearInterval(typeInterval);
+                    setTimeout(() => {
+                        const entry = document.createElement('div');
+                        entry.className = 'mb-3 animate-in fade-in duration-300';
+                        entry.innerHTML = `
+                            <div class="text-green-400 font-bold">$ ${data.cmd}</div>
+                            <div class="text-[#8b949e] whitespace-pre-wrap pl-2 border-l border-[#30363d] mt-1">${data.output}</div>
+                        `;
+                        screen.appendChild(entry);
+                        screen.scrollTop = screen.scrollHeight;
+                        typing.textContent = '';
+                        if(data.branchChange) branchLabel.textContent = `(${data.branchChange})`;
+                        isTyping = false;
+                    }, 300);
+                }
+            }, 20);
+        }
+
+        // Initialize with first step
+        window.onload = () => runStep(0);
+    </script>
+</body>
+</html>
